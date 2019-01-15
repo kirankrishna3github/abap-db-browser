@@ -14,7 +14,7 @@ define view ZDBBR_I_CDSFieldValueWithVH
   key strucobjn                                     as Entity,
   key lfieldname                                    as FieldName,
       value                                         as AssociationNameRaw,
-      upper(replace(value, '''', ''))               as AssociationName
+      replace(value, '''', '')                      as AssociationName
 }
 where
      name = 'OBJECTMODEL.FOREIGNKEY.ASSOCIATION'

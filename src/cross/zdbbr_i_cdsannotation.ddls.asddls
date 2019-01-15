@@ -8,11 +8,11 @@ define view ZDBBR_I_CdsAnnotation
 {
   strucobjn                       as EntityId,
   name                            as Name,
-  upper(replace(value, '''', '')) as Value
+  value						 	  as Value
 }
 union select from ddfieldanno
 {
   strucobjn                       as EntityId,
   name                            as Name,
-  upper(replace(value, '''', '')) as Value
+  value                           as Value
 }
