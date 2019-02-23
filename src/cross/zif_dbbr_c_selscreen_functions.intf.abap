@@ -2,6 +2,8 @@ INTERFACE zif_dbbr_c_selscreen_functions
   PUBLIC .
 
   CONSTANTS object_browser_search TYPE sy-ucomm VALUE 'NEWOBJSRCH' ##no_text.
+  CONSTANTS edit_sql_query TYPE sy-ucomm VALUE 'EDITSQLQUERY' ##no_text.
+  CONSTANTS create_sql_query TYPE sy-ucomm VALUE 'CREATESQLQUERY' ##no_text.
   CONSTANTS display_db_browser_version TYPE sy-ucomm VALUE 'SHOWVERSIO' ##no_text.
   CONSTANTS goto_next_obj_navigator_view TYPE sy-ucomm VALUE 'NXTOBJNAVV' ##no_text.
   CONSTANTS activate_optional_or_select TYPE sy-ucomm VALUE 'OR_SEL_ON' ##NO_TEXT.
@@ -72,6 +74,5 @@ INTERFACE zif_dbbr_c_selscreen_functions
   CONSTANTS show_multi_select_dialog TYPE sy-ucomm VALUE 'MORE' ##NO_TEXT.
   CONSTANTS show_navigation_history TYPE sy-ucomm VALUE 'NAVHISTORY' ##NO_TEXT.
   CONSTANTS show_option_dialog TYPE sy-ucomm VALUE 'OPTION' ##NO_TEXT.
-  CONSTANTS show_query_catalog TYPE sy-ucomm VALUE 'QUERYCAT' ##NO_TEXT.
   CONSTANTS show_technical_settings TYPE sy-ucomm VALUE 'SET_FLAGS' ##NO_TEXT.
 ENDINTERFACE.
