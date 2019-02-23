@@ -36,6 +36,7 @@ CLASS zcl_dbbr_cds_selscreen_util DEFINITION
     METHODS create_table_header
          REDEFINITION .
     METHODS fill_selection_mask
+         REDEFINITION .	
     METHODS fill_primary_entity
         REDEFINITION .
 
@@ -338,10 +339,6 @@ CLASS zcl_dbbr_cds_selscreen_util IMPLEMENTATION.
     mo_custom_menu->add_function(
       fcode = zif_dbbr_c_selscreen_functions=>show_ddls_source
       text  = |{ 'Show DDL Source'(002) }|
-    ).
-    mo_custom_menu->add_function(
-      fcode = zif_dbbr_c_selscreen_functions=>show_cds_dependency_tree
-      text  = |{ 'Show Dependency Tree'(011) }|
     ).
 
     data(lo_toolbar) = fill_toolbar( if_create_extended_search = abap_true ).
