@@ -76,13 +76,10 @@ CLASS lcl_executor IMPLEMENTATION.
           CASE ls_metadata-typekind.
 
             WHEN cl_abap_typedescr=>typekind_int1.
-              lr_type = cl_abap_elemdescr=>get_int1( ).
-
-            WHEN cl_abap_typedescr=>typekind_int8.
-              lr_type = cl_abap_elemdescr=>get_int8( ).
+              lr_type = cl_abap_elemdescr=>get_i( ).
 
             WHEN cl_abap_typedescr=>typekind_int2.
-              lr_type = cl_abap_elemdescr=>get_int2( ).
+              lr_type = cl_abap_elemdescr=>get_i( ).
 
             WHEN cl_abap_typedescr=>typekind_date.
               lr_type = cl_abap_elemdescr=>get_d( ).
