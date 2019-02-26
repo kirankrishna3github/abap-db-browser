@@ -18,7 +18,6 @@
 
 ### Features
 
-- command to execute dependency tree for CDS view
 - New Custom queries
 - Add navigation history to Object browser
 - Overhaul of Central search
@@ -47,11 +46,9 @@
 
 ### Features
 
-- add cds dependency tree feature
 - read annotations for cds view
-- add new icon constants for dependency analyzer
 - adjust default settings for users
-- add fieldname to cds view for annoations
+- add fieldname to cds view for annotations
 
 ### Fixes
 
