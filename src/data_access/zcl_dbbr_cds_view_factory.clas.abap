@@ -5,7 +5,14 @@ CLASS zcl_dbbr_cds_view_factory DEFINITION
   CREATE PUBLIC .
 
   PUBLIC SECTION.
-
+    "! <p class="shorttext synchronized" lang="en">Checks if the given CDS view was recently changed</p>
+    CLASS-METHODS has_cds_view_changed
+      IMPORTING
+        iv_cds_view_name     TYPE zdbbr_cds_view_name
+        iv_last_changed_date TYPE d
+        iv_last_changed_time TYPE t
+      RETURNING
+        VALUE(rf_changed)    TYPE abap_bool.
     "! <p class="shorttext synchronized" lang="en">Activate CDS View</p>
     CLASS-METHODS activate_cds_view
       IMPORTING
@@ -135,9 +142,17 @@ CLASS zcl_dbbr_cds_view_factory DEFINITION
     "! <p class="shorttext synchronized" lang="en">Read DDIC View for CDS View</p>
     CLASS-METHODS read_ddl_ddic_view
       IMPORTING
-        !iv_ddl_name        TYPE ddlname
+        iv_ddl_name         TYPE ddlname
       RETURNING
         VALUE(rv_ddic_view) TYPE viewname .
+    "! <p class="shorttext synchronized" lang="en">Reads entity name for given DDLS name</p>
+    CLASS-METHODS get_entity_name_for_ddls
+      IMPORTING
+        iv_ddls_name          TYPE ddobjname
+      RETURNING
+        VALUE(rv_entity_name) TYPE zdbbr_cds_view_name
+      RAISING
+        zcx_dbbr_data_read_error.
   PROTECTED SECTION.
   PRIVATE SECTION.
 
@@ -212,9 +227,9 @@ CLASS zcl_dbbr_cds_view_factory DEFINITION
     "! <p class="shorttext synchronized" lang="en">Reads annotations for parameters</p>
     CLASS-METHODS read_param_annotations
       IMPORTING
-        !iv_cds_view  TYPE zdbbr_cds_view_name
+        iv_cds_view  TYPE zdbbr_cds_view_name
       CHANGING
-        !ct_parameter TYPE zdbbr_cds_parameter_t .
+        ct_parameter TYPE zdbbr_cds_parameter_t .
 ENDCLASS.
 
 
@@ -314,7 +329,7 @@ CLASS zcl_dbbr_cds_view_factory IMPLEMENTATION.
       SELECT *
           FROM zdbbr_i_databasetable( p_language = @lv_descr_lang )
           WHERE tablename IN @lt_db_table_range
-      INTO CORRESPONDING FIELDS OF TABLE @lt_db_tables.
+      INTO CORRESPONDING FIELDS of TABLE @lt_db_tables.
     ENDIF.
 
 *... read cds view texts for associations
@@ -412,7 +427,7 @@ CLASS zcl_dbbr_cds_view_factory IMPLEMENTATION.
         AND developmentpackage IN @lt_package_range
         AND description        IN @lt_description_range
       ORDER BY entity_id
-    INTO CORRESPONDING FIELDS OF TABLE @result
+    into corresponding fields of table @RESULT
       UP TO @iv_max_rows ROWS.
 
   ENDMETHOD.
@@ -434,7 +449,7 @@ CLASS zcl_dbbr_cds_view_factory IMPLEMENTATION.
 
 
   METHOD get_tadir_entry.
-    SELECT SINGLE author AS created_by, created_on AS created_date
+    SELECT SINGLE author AS created_by, created_on AS created_date, devclass
       FROM tadir
       WHERE object   = 'STOB'
         AND pgmid    = 'R3TR'
@@ -446,7 +461,7 @@ CLASS zcl_dbbr_cds_view_factory IMPLEMENTATION.
     SELECT *
       FROM zdbbr_i_cdsannotation
       WHERE name IN @it_annotation_name
-    INTO CORRESPONDING FIELDS OF TABLE @rt_anno.
+    INTO CORRESPONDING FIELDS of TABLE @rt_anno.
   ENDMETHOD.
 
 
@@ -462,6 +477,14 @@ CLASS zcl_dbbr_cds_view_factory IMPLEMENTATION.
           EXPORTING
             previous = lx_ddl_read.
     ENDTRY.
+  ENDMETHOD.
+
+  METHOD get_entity_name_for_ddls.
+    SELECT SINGLE objectname
+      FROM ddldependency
+      WHERE objecttype = 'STOB'
+        AND ddlname    = @iv_ddls_name
+    INTO @rv_entity_name.
   ENDMETHOD.
 
 
@@ -520,7 +543,7 @@ CLASS zcl_dbbr_cds_view_factory IMPLEMENTATION.
     SELECT *
       FROM zdbbr_i_cdsannotation
       WHERE name IN @et_anno_name_range
-    APPENDING CORRESPONDING FIELDS OF TABLE @sender->mt_annotations.
+    APPENDING CORRESPONDING FIELDS of TABLE @sender->mt_annotations.
 
     IF sy-subrc = 0.
       SORT sender->mt_annotations BY fieldname name.
@@ -563,19 +586,30 @@ CLASS zcl_dbbr_cds_view_factory IMPLEMENTATION.
 
 
   METHOD read_cds_base_tables.
-    DATA: lt_ddnames      TYPE if_dd_ddl_types=>ty_t_ddobj,
-          lt_db_obj_range TYPE RANGE OF tabname.
+    TYPES:
+      BEGIN OF lty_s_base_table,
+        ddlview   TYPE zdbbrdd26s_v-ddlview,
+        basetable TYPE char40,
+        tabpos    TYPE zdbbrdd26s_v-tabpos,
+        pgmid     TYPE zdbbrdd26s_v-pgmid,
+        ddictype  TYPE zdbbrdd26s_v-ddictype,
+      END OF lty_s_base_table.
+
+    DATA: lt_ddnames              TYPE if_dd_ddl_types=>ty_t_ddobj,
+          lt_base_tables          TYPE TABLE OF lty_s_base_table,
+          lt_ddls_base_dependency TYPE TABLE OF zdbbr_i_ddldependency,
+          lt_ddls_base_tables     TYPE zdbbr_cds_view_name_t,
+          lt_db_obj_range         TYPE RANGE OF tabname.
 
     SELECT *
       FROM zdbbrdd26s_v
       WHERE ddlview = @iv_view_name
       ORDER BY tabpos
-      INTO TABLE @DATA(lt_base_tables).
+      into corresponding fields of table @lt_base_tables.
 
     CHECK sy-subrc = 0.
 
-
-*... collect all base tables of type VIEW and try to retrieve then ddl entities for them
+*... collect all base tables of type VIEW and try to retrieve then DDLS entities for them
     lt_ddnames = VALUE #(
       FOR view IN lt_base_tables
       WHERE ( ddictype = 'VIEW' )
@@ -591,8 +625,39 @@ CLASS zcl_dbbr_cds_view_factory IMPLEMENTATION.
         entity_of_view = DATA(lt_entity_of_view)
     ).
 
-*... read headers for ddl found entities
-    DATA(lt_header) = read_cds_view_header_multi( it_cds_view_name = VALUE #( FOR ddl IN lt_entity_of_view ( ddl-entityname ) ) ).
+*.. Collect all DDLS base tables
+    IF line_exists( lt_base_tables[ ddictype = 'DDLS' ] ).
+      SELECT ddlname,
+             entityname,
+             viewname
+        FROM zdbbr_i_ddldependency
+        FOR ALL ENTRIES IN @lt_base_tables
+        WHERE ddlname = @lt_base_tables-basetable
+      INTO TABLE @DATA(lt_dependency).
+      IF sy-subrc = 0.
+        lt_ddls_base_tables = VALUE #(
+          FOR ddls IN lt_dependency ( ddls-entityname )
+        ).
+      ENDIF.
+    ENDIF.
+
+*... read headers for DDL found entities
+    DATA(lt_header) = read_cds_view_header_multi(
+        VALUE #(
+          ( LINES OF VALUE #( FOR ddl IN lt_entity_of_view ( ddl-entityname ) ) )
+          ( LINES OF lt_ddls_base_tables )
+        )
+    ).
+
+    IF lt_header IS NOT INITIAL.
+      SELECT ddlname,
+             entityname,
+             viewname
+        FROM zdbbr_i_ddldependency
+        FOR ALL ENTRIES IN @lt_ddnames
+        WHERE viewname = @lt_ddnames-name
+      APPENDING CORRESPONDING FIELDS of TABLE @lt_dependency.
+    ENDIF.
 
     LOOP AT lt_base_tables ASSIGNING FIELD-SYMBOL(<ls_base_table>).
 *... exclude some tables which some get mixed up inside dd26s ( they are not really used in the select clause )
@@ -609,6 +674,7 @@ CLASS zcl_dbbr_cds_view_factory IMPLEMENTATION.
         DATA(lr_s_entity) = REF #( lt_entity_of_view[ viewname = <ls_base_table>-basetable ] OPTIONAL ).
         IF lr_s_entity IS BOUND.
           ls_base_table-entityname = lr_s_entity->entityname.
+          ls_base_table-secondary_entity_id = VALUE #( lt_dependency[ viewname = <ls_base_table>-basetable ]-ddlname ).
           ls_base_table-table_kind = zif_dbbr_c_entity_type=>cds_view.
 *........ retrieve header to get raw name and description
           DATA(lr_s_header) = REF #( lt_header[ strucobjn = ls_base_table-entityname ] ).
@@ -622,6 +688,14 @@ CLASS zcl_dbbr_cds_view_factory IMPLEMENTATION.
           ls_base_table-entityname_raw = <ls_base_table>-basetable.
           lt_db_obj_range = VALUE #( BASE lt_db_obj_range ( sign = 'I' option = 'EQ' low = <ls_base_table>-basetable ) ).
         ENDIF.
+      ELSEIF <ls_base_table>-ddictype = 'DDLS'.
+*........ DDLS types are normally only CDS Table functions
+        ls_base_table-entityname = VALUE #( lt_dependency[ ddlname = <ls_base_table>-basetable ]-entityname ).
+        lr_s_header = REF #( lt_header[ strucobjn = ls_base_table-entityname ] ).
+        ls_base_table-entityname_raw = lr_s_header->strucobjn_raw.
+        ls_base_table-description = lr_s_header->ddtext.
+        ls_base_table-secondary_entity_id = <ls_base_table>-basetable.
+        ls_base_table-table_kind = zif_dbbr_c_entity_type=>cds_view.
       ELSE.
         ls_base_table-table_kind = zif_dbbr_c_entity_type=>table.
         ls_base_table-entityname =
@@ -656,15 +730,27 @@ CLASS zcl_dbbr_cds_view_factory IMPLEMENTATION.
 *... try to read view from cache
     result = VALUE #( st_cds_view_cache[ cds_view_name = iv_cds_view
                                          language      = lv_description_language ]-ref OPTIONAL ).
+
+    IF result IS BOUND.
+*... Check if the cds view was recently changed
+      IF has_cds_view_changed( iv_cds_view_name     = result->mv_view_name
+                               iv_last_changed_date = result->ms_header-chgdate
+                               iv_last_changed_time = result->ms_header-chgtime ).
+        DELETE st_cds_view_cache WHERE cds_view_name = iv_cds_view
+                                   AND language      = lv_description_language.
+        CLEAR result.
+      ENDIF.
+    ENDIF.
+
     CHECK result IS NOT BOUND.
 
     DATA(lr_dd_sobject) = cl_dd_sobject_factory=>create( ).
-
 
     TRY.
 
         lr_dd_sobject->read(
           EXPORTING
+            get_state    = 'A'
             withtext     = abap_true
             langu        = lv_description_language
             sobjnames    = VALUE #( ( iv_cds_view ) )
@@ -734,6 +820,9 @@ CLASS zcl_dbbr_cds_view_factory IMPLEMENTATION.
               it_fields = lt_assoc_fields
           ).
         ENDIF.
+
+*...... Delete client field if existing
+        DELETE lt_col WHERE datatype = 'CLNT'.
 
         result = NEW zcl_dbbr_cds_view(
           is_header             = ls_header
@@ -870,7 +959,7 @@ CLASS zcl_dbbr_cds_view_factory IMPLEMENTATION.
           FROM (lv_from)
           WHERE (lt_where)
           ORDER BY (lv_order_by)
-        INTO CORRESPONDING FIELDS OF TABLE @lt_paramanno.
+        INTO CORRESPONDING FIELDS of TABLE @lt_paramanno.
       CATCH cx_sy_open_sql_db INTO DATA(lr_osql_db_exc).
       CATCH cx_sy_dynamic_osql_semantics INTO DATA(lr_osql_semantics_exc).
       CATCH cx_sy_dynamic_osql_syntax INTO DATA(lr_osql_syntax_exc).
@@ -927,4 +1016,15 @@ CLASS zcl_dbbr_cds_view_factory IMPLEMENTATION.
     ENDLOOP.
 
   ENDMETHOD.
+
+  METHOD has_cds_view_changed.
+    DATA(ls_header) = read_cds_view_header( iv_cds_view = iv_cds_view_name ).
+    IF ls_header IS INITIAL.
+      rf_changed = abap_true.
+      RETURN.
+    ENDIF.
+
+    rf_changed = xsdbool( iv_last_changed_date < ls_header-chgdate OR iv_last_changed_time < ls_header-chgtime ).
+  ENDMETHOD.
+
 ENDCLASS.

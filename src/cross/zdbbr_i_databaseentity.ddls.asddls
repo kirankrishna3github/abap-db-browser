@@ -15,6 +15,8 @@ define view ZDBBR_I_DatabaseEntity
   Language,
   DevelopmentPackage,
   CreatedBy,
+  CreatedDate,
+  ChangedDate,
   Type
 }
 union select from ZDBBR_I_DatabaseView(p_language : $parameters.p_language)
@@ -25,6 +27,8 @@ union select from ZDBBR_I_DatabaseView(p_language : $parameters.p_language)
   Language,
   DevelopmentPackage,
   CreatedBy,
+  CreatedDate,
+  ChangedDate,
   Type
 }
 union select from ZDBBR_I_CDSEntity(p_language : $parameters.p_language)
@@ -35,5 +39,7 @@ union select from ZDBBR_I_CDSEntity(p_language : $parameters.p_language)
   Language,
   DevelopmentPackage,
   CreatedBy,
+  CreatedDate,
+  ChangedDate,
   Type
 }

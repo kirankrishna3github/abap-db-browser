@@ -19,6 +19,8 @@ define view ZDBBR_I_CDSEntity
   Text.Language,
   Text.Description,
   Base.CreatedBy,
+  Base.CreatedDate,
+  Base.ChangedDate,
   'C'                     as Type
 }
 where

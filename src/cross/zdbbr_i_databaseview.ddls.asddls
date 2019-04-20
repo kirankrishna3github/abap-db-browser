@@ -18,6 +18,8 @@ define view ZDBBR_I_DatabaseView
   ddtext            as Description,
   ddlanguage        as Language,
   author            as CreatedBy,
+  Repo.created_on   as CreatedDate,
+  as4date           as ChangedDate,
   devclass          as DevelopmentPackage,
   'V'               as Type
 }
