@@ -4,7 +4,6 @@
   <asx:values>
    <VSEOINTERF>
     <CLSNAME>ZIF_DBBR_C_OPTIONS</CLSNAME>
-    <VERSION>1</VERSION>
     <LANGU>E</LANGU>
     <DESCRIPT>Constants for Range Options</DESCRIPT>
     <EXPOSURE>2</EXPOSURE>
@@ -17,18 +16,6 @@
      <CMPNAME>BETWEEN</CMPNAME>
      <LANGU>E</LANGU>
      <DESCRIPT>Search Value lies between 2 values</DESCRIPT>
-    </SEOCOMPOTX>
-    <SEOCOMPOTX>
-     <CLSNAME>ZIF_DBBR_C_OPTIONS</CLSNAME>
-     <CMPNAME>EXCLUDES</CMPNAME>
-     <LANGU>E</LANGU>
-     <DESCRIPT>Excludes value in search</DESCRIPT>
-    </SEOCOMPOTX>
-    <SEOCOMPOTX>
-     <CLSNAME>ZIF_DBBR_C_OPTIONS</CLSNAME>
-     <CMPNAME>INCLUDES</CMPNAME>
-     <LANGU>E</LANGU>
-     <DESCRIPT>Includes value in search</DESCRIPT>
     </SEOCOMPOTX>
     <SEOCOMPOTX>
      <CLSNAME>ZIF_DBBR_C_OPTIONS</CLSNAME>

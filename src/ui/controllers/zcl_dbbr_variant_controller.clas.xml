@@ -4,7 +4,6 @@
   <asx:values>
    <VSEOCLASS>
     <CLSNAME>ZCL_DBBR_VARIANT_CONTROLLER</CLSNAME>
-    <VERSION>1</VERSION>
     <LANGU>E</LANGU>
     <DESCRIPT>Controlller zum Speichern/Lesen/Löschen von Varianten</DESCRIPT>
     <STATE>1</STATE>
@@ -86,12 +85,6 @@
      <CMPNAME>MV_SELSCREEN_MODE</CMPNAME>
      <LANGU>E</LANGU>
      <DESCRIPT>Mode for Seleciton Screen of DB Browser</DESCRIPT>
-    </SEOCOMPOTX>
-    <SEOCOMPOTX>
-     <CLSNAME>ZCL_DBBR_VARIANT_CONTROLLER</CLSNAME>
-     <CMPNAME>READ_VARIANT</CMPNAME>
-     <LANGU>E</LANGU>
-     <DESCRIPT>Read variant</DESCRIPT>
     </SEOCOMPOTX>
    </DESCRIPTIONS>
   </asx:values>

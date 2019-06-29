@@ -4,8 +4,6 @@
   <asx:values>
    <PROGDIR>
     <NAME>SAPLZDBBR</NAME>
-    <STATE>A</STATE>
-    <VARCL>X</VARCL>
     <DBAPL>S</DBAPL>
     <DBNA>D$</DBNA>
     <SUBC>F</SUBC>
@@ -587,6 +585,12 @@
      <KEY>P_VARTXT</KEY>
      <ENTRY>Short description</ENTRY>
      <LENGTH>25</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>P_XCOLWD</KEY>
+     <ENTRY>With defined Column Widths</ENTRY>
+     <LENGTH>34</LENGTH>
     </item>
     <item>
      <ID>S</ID>

@@ -54,18 +54,10 @@
      <DDTEXT>Tabelle</DDTEXT>
     </item>
     <item>
-     <VALPOS>0002</VALPOS>
-     <DOMVALUE_L>Q</DOMVALUE_L>
-    </item>
-    <item>
      <VALPOS>0003</VALPOS>
      <DDLANGUAGE>D</DDLANGUAGE>
      <DOMVALUE_L>O</DOMVALUE_L>
      <DDTEXT>Ordner</DDTEXT>
-    </item>
-    <item>
-     <VALPOS>0004</VALPOS>
-     <DOMVALUE_L>C</DOMVALUE_L>
     </item>
    </DD07_TEXTS>
   </asx:values>

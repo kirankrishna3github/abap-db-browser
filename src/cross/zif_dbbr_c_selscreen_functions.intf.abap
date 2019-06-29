@@ -1,6 +1,9 @@
 INTERFACE zif_dbbr_c_selscreen_functions
   PUBLIC .
 
+  CONSTANTS load_default_variant TYPE sy-ucomm VALUE 'LOADDEFAULTVARIANT' ##NO_TEXT.
+  CONSTANTS create_default_variant TYPE sy-ucomm VALUE 'CREATEDEFAULTVARIANT' ##NO_TEXT.
+  CONSTANTS delete_default_variant TYPE sy-ucomm VALUE 'DELETEDEFAULTVARIANT' ##NO_TEXT.
   CONSTANTS object_browser_search TYPE sy-ucomm VALUE 'NEWOBJSRCH' ##no_text.
   CONSTANTS edit_sql_query TYPE sy-ucomm VALUE 'EDITSQLQUERY' ##no_text.
   CONSTANTS create_sql_query TYPE sy-ucomm VALUE 'CREATESQLQUERY' ##no_text.
@@ -58,7 +61,8 @@ INTERFACE zif_dbbr_c_selscreen_functions
   CONSTANTS open_cds_view_with_adt TYPE sy-ucomm VALUE 'ENTITYFC03' ##NO_TEXT.
   CONSTANTS open_specific_extended_search TYPE sy-ucomm VALUE 'EXT_SEARCH_BY_TYPE' ##NO_TEXT.
   CONSTANTS pick_navigation TYPE sy-ucomm VALUE 'PICK' ##NO_TEXT.
-  CONSTANTS save_f4_at_field TYPE sy-ucomm VALUE 'SAVE_F4' ##NO_TEXT.
+  CONSTANTS assign_built_in_f4_at_field TYPE sy-ucomm VALUE 'ASSGNBIF4' ##NO_TEXT.
+  CONSTANTS assign_custom_f4_at_field TYPE sy-ucomm VALUE 'ASSGNCF4' ##NO_TEXT.
   CONSTANTS save_query TYPE sy-ucomm VALUE 'SAVESCRIPT' ##NO_TEXT.
   CONSTANTS save_variant TYPE sy-ucomm VALUE 'LT_SAVE' ##NO_TEXT.
   CONSTANTS search_table TYPE sy-ucomm VALUE 'SEARCH' ##NO_TEXT.

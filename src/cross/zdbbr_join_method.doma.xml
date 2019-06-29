@@ -59,14 +59,6 @@
      <DOMVALUE_L>CONSTANT</DOMVALUE_L>
      <DDTEXT>Konstante</DDTEXT>
     </item>
-    <item>
-     <VALPOS>0003</VALPOS>
-     <DOMVALUE_L>SYST_CONST</DOMVALUE_L>
-    </item>
-    <item>
-     <VALPOS>0004</VALPOS>
-     <DOMVALUE_L>CONST_REF</DOMVALUE_L>
-    </item>
    </DD07_TEXTS>
   </asx:values>
  </asx:abap>

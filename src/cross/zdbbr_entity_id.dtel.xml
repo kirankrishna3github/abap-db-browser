@@ -15,7 +15,9 @@
     <SCRTEXT_S>EntityID</SCRTEXT_S>
     <SCRTEXT_M>Entity ID</SCRTEXT_M>
     <SCRTEXT_L>Unique ID of an Entity</SCRTEXT_L>
+    <ACTFLAG>I</ACTFLAG>
     <DTELMASTER>E</DTELMASTER>
+    <RESERVEDTE>JB</RESERVEDTE>
     <REFKIND>D</REFKIND>
    </DD04V>
   </asx:values>

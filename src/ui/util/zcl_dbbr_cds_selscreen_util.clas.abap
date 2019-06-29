@@ -10,37 +10,34 @@ CLASS zcl_dbbr_cds_selscreen_util DEFINITION
       IMPORTING
         !ir_selscreen_data TYPE REF TO zcl_dbbr_selscreen_data .
 
-
     METHODS get_entity_information
-         REDEFINITION .
+        REDEFINITION .
     METHODS get_title
-         REDEFINITION .
-    METHODS load_entity
-         REDEFINITION .
+        REDEFINITION .
     METHODS set_custom_functions
-         REDEFINITION .
+        REDEFINITION .
     METHODS update_description_texts
-         REDEFINITION .
+        REDEFINITION .
     METHODS zif_dbbr_screen_table_util~handle_pbo
-         REDEFINITION .
+        REDEFINITION .
     METHODS zif_dbbr_screen_util~get_deactivated_functions
-         REDEFINITION .
+        REDEFINITION .
     METHODS zif_dbbr_screen_util~handle_pbo
-         REDEFINITION .
+        REDEFINITION .
     METHODS zif_dbbr_screen_util~handle_ui_function
-         REDEFINITION .
+        REDEFINITION .
     METHODS clear
-         REDEFINITION .
+        REDEFINITION .
   PROTECTED SECTION.
 
+    METHODS load_entity_internal
+        REDEFINITION .
     METHODS create_table_header
-         REDEFINITION .
+        REDEFINITION .
     METHODS fill_selection_mask
-         REDEFINITION .	
+        REDEFINITION .
     METHODS fill_primary_entity
         REDEFINITION .
-
-
   PRIVATE SECTION.
 
     DATA mo_cds_view TYPE REF TO zcl_dbbr_cds_view .
@@ -52,10 +49,12 @@ CLASS zcl_dbbr_cds_selscreen_util DEFINITION
 
     METHODS choose_cds_sub_entity
       IMPORTING
-        !if_return_chosen_directly   TYPE abap_bool OPTIONAL
-        !if_only_associations        TYPE abap_bool OPTIONAL
+        if_return_chosen_directly    TYPE abap_bool OPTIONAL
+        if_only_associations         TYPE abap_bool OPTIONAL
       RETURNING
         VALUE(rs_chosen_association) TYPE zdbbr_cds_association .
+    METHODS build_default_custom_function.
+
 ENDCLASS.
 
 
@@ -68,7 +67,8 @@ CLASS zcl_dbbr_cds_selscreen_util IMPLEMENTATION.
         ev_description = ev_description
     ).
     ev_type = zif_dbbr_c_favmenu_type=>cds_view.
-    ev_entity = mv_cds_view.
+    ev_entity =
+    ev_entity_id = mv_cds_view.
     ev_entity_raw = mv_cds_view_name_raw.
   ENDMETHOD.
 
@@ -83,7 +83,7 @@ CLASS zcl_dbbr_cds_selscreen_util IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD load_entity.
+  METHOD load_entity_internal.
     CHECK mv_cds_view IS NOT INITIAL.
 
     TRY.
@@ -253,15 +253,17 @@ CLASS zcl_dbbr_cds_selscreen_util IMPLEMENTATION.
 
     check_edit_mode( ).
 
+    mo_data->mo_custom_f4_map->read_custom_f4_definitions( mv_cds_view ).
+
 *... create parameters
     zcl_dbbr_cds_tabfield_util=>add_parameters(
         ir_tabfield_list = mo_data->mo_tabfield_list
+        io_custom_f4_map = mo_data->mo_custom_f4_map
         it_parameters    = mo_cds_view->get_parameters( )
     ).
 *... create table fields for cds view
     DATA(ls_header) = mo_cds_view->get_header( ).
 
-    mo_data->mo_custom_f4_map->read_custom_f4_definitions( mv_cds_view ).
 
     zcl_dbbr_cds_tabfield_util=>add_view_colums(
         io_custom_f4_map = mo_data->mo_custom_f4_map
@@ -323,23 +325,7 @@ CLASS zcl_dbbr_cds_selscreen_util IMPLEMENTATION.
     ).
 
     mo_custom_menu = NEW cl_ctmenu( ).
-    mo_custom_menu->add_function(
-      fcode = zif_dbbr_c_selscreen_functions=>open_cds_view_with_adt
-      text  = |{ 'Open with ADT'(005) }|
-    ).
-    mo_custom_menu->add_function(
-      fcode = zif_dbbr_c_selscreen_functions=>go_to_ddic_view_of_cds
-      text  = |{ 'Go to DDIC View'(006) }|
-    ).
-    mo_custom_menu->add_function(
-      fcode = zif_dbbr_c_selscreen_functions=>choose_cds_sub_entity
-      text  = |{ 'Navigate to Sub Entity'(003) }|
-    ).
-    mo_custom_menu->add_separator( ).
-    mo_custom_menu->add_function(
-      fcode = zif_dbbr_c_selscreen_functions=>show_ddls_source
-      text  = |{ 'Show DDL Source'(002) }|
-    ).
+    build_default_custom_function( ).
 
     DATA(lo_toolbar) = fill_toolbar( if_create_extended_search = abap_true ).
 
@@ -401,6 +387,9 @@ CLASS zcl_dbbr_cds_selscreen_util IMPLEMENTATION.
 
 
   METHOD zif_dbbr_screen_util~handle_ui_function.
+    super->handle_ui_function( CHANGING cv_function = cv_function ).
+    CHECK mo_cds_view IS BOUND.
+
     CASE cv_function.
 
       WHEN zif_dbbr_c_selscreen_functions=>show_ddls_source.
@@ -437,4 +426,25 @@ CLASS zcl_dbbr_cds_selscreen_util IMPLEMENTATION.
 
     ENDCASE.
   ENDMETHOD.
+
+  METHOD build_default_custom_function.
+    mo_custom_menu->add_function(
+      fcode = zif_dbbr_c_selscreen_functions=>open_cds_view_with_adt
+      text  = |{ 'Open with ADT'(005) }|
+    ).
+    mo_custom_menu->add_function(
+      fcode = zif_dbbr_c_selscreen_functions=>go_to_ddic_view_of_cds
+      text  = |{ 'Go to DDIC View'(006) }|
+    ).
+    mo_custom_menu->add_function(
+      fcode = zif_dbbr_c_selscreen_functions=>choose_cds_sub_entity
+      text  = |{ 'Navigate to Sub Entity'(003) }|
+    ).
+    mo_custom_menu->add_separator( ).
+    mo_custom_menu->add_function(
+      fcode = zif_dbbr_c_selscreen_functions=>show_ddls_source
+      text  = |{ 'Show DDL Source'(002) }|
+    ).
+  ENDMETHOD.
+
 ENDCLASS.

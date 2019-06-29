@@ -1,5 +1,5 @@
 @AbapCatalog.sqlViewName: 'ZDBBRICDSEN'
-@AbapCatalog.compiler.compareFilter: true
+@AbapCatalog.compiler.CompareFilter: true
 @AbapCatalog.preserveKey: true
 @AccessControl.authorizationCheck: #CHECK
 @EndUserText.label: 'Entity in Data Definition'
@@ -15,6 +15,7 @@ define view ZDBBR_I_CDSEntity
   Base.EntityId,
   Base.RawEntityId,
   Base.DdlName,
+  Base.ViewName,  
   Base.DevelopmentPackage,
   Text.Language,
   Text.Description,

@@ -47,14 +47,11 @@
        <TDLINE>This setting controls, if the Database View of a CDS view should be used</TDLINE>
       </TLINE>
       <TLINE>
-       <TDLINE>when a selecting data from a CDS View</TDLINE>
+       <TDLINE>when selecting data from a CDS View</TDLINE>
       </TLINE>
       <TLINE>
        <TDFORMAT>U1</TDFORMAT>
        <TDLINE>&amp;USE&amp;</TDLINE>
-      </TLINE>
-      <TLINE>
-       <TDFORMAT>AS</TDFORMAT>
       </TLINE>
       <TLINE>
        <TDFORMAT>U1</TDFORMAT>

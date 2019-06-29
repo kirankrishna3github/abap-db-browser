@@ -4,7 +4,6 @@
   <asx:values>
    <VSEOCLASS>
     <CLSNAME>ZCL_DBBR_OB_CDS_SEARCHER</CLSNAME>
-    <VERSION>1</VERSION>
     <LANGU>E</LANGU>
     <DESCRIPT>CDS View Searcher for Object Browser</DESCRIPT>
     <STATE>1</STATE>
@@ -31,12 +30,6 @@
      <CMPNAME>ADD_EXTENSIONS_FILTER</CMPNAME>
      <LANGU>E</LANGU>
      <DESCRIPT>Adds extensions filter to query</DESCRIPT>
-    </SEOCOMPOTX>
-    <SEOCOMPOTX>
-     <CLSNAME>ZCL_DBBR_OB_CDS_SEARCHER</CLSNAME>
-     <CMPNAME>ADD_EXTENSION_FILTER</CMPNAME>
-     <LANGU>E</LANGU>
-     <DESCRIPT>Add extended by filter values to ddlname</DESCRIPT>
     </SEOCOMPOTX>
     <SEOCOMPOTX>
      <CLSNAME>ZCL_DBBR_OB_CDS_SEARCHER</CLSNAME>

@@ -4,7 +4,6 @@
   <asx:values>
    <VSEOCLASS>
     <CLSNAME>ZCL_DBBR_ADT_UTIL</CLSNAME>
-    <VERSION>1</VERSION>
     <LANGU>E</LANGU>
     <DESCRIPT>Utilities for ADT navigation</DESCRIPT>
     <STATE>1</STATE>
@@ -24,12 +23,6 @@
      <CMPNAME>GET_ADT_OBJECTS_AND_NAMES</CMPNAME>
      <LANGU>E</LANGU>
      <DESCRIPT>Retrieve adt object and names</DESCRIPT>
-    </SEOCOMPOTX>
-    <SEOCOMPOTX>
-     <CLSNAME>ZCL_DBBR_ADT_UTIL</CLSNAME>
-     <CMPNAME>GET_ADT_OBJECT_REF_URI</CMPNAME>
-     <LANGU>E</LANGU>
-     <DESCRIPT>Retrieve ADT Object URI for the given name/type</DESCRIPT>
     </SEOCOMPOTX>
     <SEOCOMPOTX>
      <CLSNAME>ZCL_DBBR_ADT_UTIL</CLSNAME>
